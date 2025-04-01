@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ハリボー価格チェッカー</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍬 ハリボー価格チェッカー</h1>
+            <p>Amazonと楽天のハリボー商品を比較して、最安価格を見つけよう！</p>
+        </header>
+
+        <main>
+            <section class="price-list">
+                <h2>商品一覧</h2>
+                <div class="controls">
+                    <button id="refreshBtn" class="btn">最新情報を取得</button>
+                </div>
+                <div id="priceList" class="price-grid">
+                    <!-- 商品情報がここに表示されます -->
+                </div>
+            </section>
+
+            <section class="cheapest">
+                <h2>最安商品</h2>
+                <div id="cheapestItem" class="cheapest-item">
+                    <!-- 最安商品がここに表示されます -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>※ 価格は24時間以内に更新されます</p>
+        </footer>
+    </div>
+
+    <script>
+        // 商品情報を取得して表示
+        async function fetchAndDisplayPrices() {
+            try {
+                const response = await fetch('/prices');
+                const prices = await response.json();
+                
+                // 商品一覧を表示
+                const priceList = document.getElementById('priceList');
+                priceList.innerHTML = prices.map(item => `
+                    <div class="price-card">
+                        <img src="${item.item.Images.Primary.Medium?.URL || item.item.mediumImageUrl}" alt="${item.item.ItemInfo.Title.DisplayValue || item.item.itemName}">
+                        <h3>${item.item.ItemInfo.Title.DisplayValue || item.item.itemName}</h3>
+                        <p class="price">¥${item.price.toLocaleString()}</p>
+                        <p class="weight">${item.weight}g</p>
+                        <p class="price-per-gram">1gあたり: ¥${item.pricePerGram.toFixed(2)}</p>
+                        <a href="${item.item.DetailPageURL || item.item.itemUrl}" target="_blank" class="btn">商品を見る</a>
+                    </div>
+                `).join('');
+
+                // 最安商品を表示
+                const cheapestResponse = await fetch('/cheapest');
+                const cheapest = await cheapestResponse.json();
+                const cheapestItem = document.getElementById('cheapestItem');
+                cheapestItem.innerHTML = `
+                    <div class="cheapest-card">
+                        <img src="${cheapest.item.Images.Primary.Medium?.URL || cheapest.item.mediumImageUrl}" alt="${cheapest.item.ItemInfo.Title.DisplayValue || cheapest.item.itemName}">
+                        <h3>${cheapest.item.ItemInfo.Title.DisplayValue || cheapest.item.itemName}</h3>
+                        <p class="price">¥${cheapest.price.toLocaleString()}</p>
+                        <p class="weight">${cheapest.weight}g</p>
+                        <p class="price-per-gram">1gあたり: ¥${cheapest.pricePerGram.toFixed(2)}</p>
+                        <a href="${cheapest.item.DetailPageURL || cheapest.item.itemUrl}" target="_blank" class="btn">商品を見る</a>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('データの取得に失敗しました:', error);
+                alert('データの取得に失敗しました。しばらく待ってから再度お試しください。');
+            }
+        }
+
+        // 最新情報を取得ボタンのイベントリスナー
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            fetchAndDisplayPrices();
+        });
+
+        // 初期表示
+        fetchAndDisplayPrices();
+    </script>
+</body>
+</html> 

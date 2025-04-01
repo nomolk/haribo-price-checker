@@ -1,0 +1,27 @@
+{
+  "name": "haribo-price-checker",
+  "version": "1.0.0",
+  "description": "ハリボーゴールドベアの価格比較アプリ",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "deploy": "serverless deploy",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.511.0",
+    "axios": "^1.8.4",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "serverless-http": "^3.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3",
+    "serverless": "^3.38.0"
+  },
+  "engines": {
+    "node": ">=14.18.0"
+  }
+}

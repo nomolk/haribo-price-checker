@@ -1,0 +1,25 @@
+service: haribo-price-checker
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-northeast-1
+  environment:
+    AMAZON_ASSOCIATE_ACCESS_KEY: ${env:AMAZON_ASSOCIATE_ACCESS_KEY}
+    AMAZON_ASSOCIATE_SECRET_KEY: ${env:AMAZON_ASSOCIATE_SECRET_KEY}
+    AMAZON_ASSOCIATE_TAG: ${env:AMAZON_ASSOCIATE_TAG}
+    RAKUTEN_APPLICATION_ID: ${env:RAKUTEN_APPLICATION_ID}
+    AWS_REGION: ap-northeast-1
+
+functions:
+  api:
+    handler: src/index.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true
+  updatePrices:
+    handler: src/index.handler
+    events:
+      - schedule: rate(1 day) 
